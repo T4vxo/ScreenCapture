@@ -281,9 +281,7 @@ public class ScreenCaptureForm extends javax.swing.JFrame {
 
     private void jPanel2ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jPanel2ComponentShown
         try {
-       
             labelSavedFile.setIcon(null);
-       
              comboboxFiles.removeAllItems();
         }catch(Exception e){}
         
@@ -299,7 +297,7 @@ public class ScreenCaptureForm extends javax.swing.JFrame {
     private void comboboxFilesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboboxFilesActionPerformed
         
         String filename = comboboxFiles.getSelectedItem().toString();
-        JOptionPane.showMessageDialog(rootPane, filename);
+       
         ImageIcon imageIcon = new ImageIcon(filename);
         imageIcon = Resize(imageIcon.getImage(), labelSavedFile.getWidth(),labelSavedFile.getHeight());
         
