@@ -15,6 +15,7 @@ public class ScreenCapture {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+       //create the form
        ScreenCaptureForm form = new ScreenCaptureForm();
        form.setVisible(true);
     }
