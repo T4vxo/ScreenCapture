@@ -17,6 +17,7 @@ public class ScreenCapture {
     public static void main(String[] args) {
        //create the form
        ScreenCaptureForm form = new ScreenCaptureForm();
+       form.setTitle("ScreenCapture @pp");
        form.setVisible(true);
     }
     
