@@ -5,6 +5,7 @@
  */
 package screencapture;
 
+import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Robot;
@@ -286,8 +287,9 @@ public class ScreenCaptureForm extends javax.swing.JFrame {
     private void buttonTakeScreenShootActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonTakeScreenShootActionPerformed
         try {
             Rectangle screenRectangle = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+            setState(Frame.ICONIFIED); //minimize frame
             capture = new Robot().createScreenCapture(screenRectangle);
-
+            setState(Frame.NORMAL); //restore frame
             ImageIcon icon = Resize(capture, labelPreview.getWidth(), labelPreview.getHeight());
             labelPreview.setIcon(icon);
         } catch (Exception ex) {
@@ -299,7 +301,7 @@ public class ScreenCaptureForm extends javax.swing.JFrame {
         try {
             JFileChooser chooser = new JFileChooser();
             chooser.setDialogTitle("Choose folder");
-            chooser.setCurrentDirectory(new File("C:\\T4\\"));
+            chooser.setCurrentDirectory(new File("E:\\T4\\"));
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             chooser.setAcceptAllFileFilterUsed(false);
             chooser.showOpenDialog(null);
