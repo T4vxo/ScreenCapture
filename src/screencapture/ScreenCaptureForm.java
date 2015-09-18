@@ -10,36 +10,76 @@ import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-
 
 /**
  *
  * @author Lobo
  */
 public class ScreenCaptureForm extends javax.swing.JFrame {
-    BufferedImage capture; 
-    List<String> savedFiles = new LinkedList<>(); //skapa tom lista
+
+    BufferedImage capture;
+    List<String> savedFiles;
+
     /**
      * Creates new form ScreenCaptureForm
      */
     public ScreenCaptureForm() {
         initComponents();
+        loadList();
     }
 
-    private ImageIcon Resize(Image image, int width, int height){
-        Image resizedImage = image.getScaledInstance(width, height,Image.SCALE_SMOOTH);
+    private void loadList() {
+        savedFiles = new LinkedList<>(); //skapar listan
+        //läser in från filen
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("savedfiles.txt"));
+            while (true) {
+             String line = reader.readLine();
+             if(line == null){
+                 break;
+             }
+             savedFiles.add(line);
+            }
+        } catch (Exception e) {
+            System.out.println("Error:"+e.getMessage());
+        }
+        //läs in i comboboxen
+        for(String file: savedFiles){
+         comboboxFiles.addItem(file);
+        }
+
+    }
+    
+    private void saveFile(String path){
+        try {
+            
+            PrintWriter writer = new PrintWriter
+                                (new BufferedWriter
+                                (new FileWriter("savedfiles.txt",true)));
+            writer.println(path);
+            writer.close();
+        } catch (Exception e) {
+            System.out.println("Error:"+e.getMessage());
+        }
+    }
+
+    private ImageIcon Resize(Image image, int width, int height) {
+        Image resizedImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
         ImageIcon resized = new ImageIcon(resizedImage);
         return resized;
     }
-   
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -247,7 +287,7 @@ public class ScreenCaptureForm extends javax.swing.JFrame {
         try {
             Rectangle screenRectangle = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
             capture = new Robot().createScreenCapture(screenRectangle);
-      
+
             ImageIcon icon = Resize(capture, labelPreview.getWidth(), labelPreview.getHeight());
             labelPreview.setIcon(icon);
         } catch (Exception ex) {
@@ -256,51 +296,39 @@ public class ScreenCaptureForm extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonTakeScreenShootActionPerformed
 
     private void buttonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSaveActionPerformed
-            try {
-                JFileChooser chooser = new JFileChooser();
-                chooser.setDialogTitle("Choose folder");
-                chooser.setCurrentDirectory(new File("C:\\T4\\"));
-                chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                chooser.setAcceptAllFileFilterUsed(false); 
-                chooser.showOpenDialog(null);
-                File dir = chooser.getSelectedFile();
-                if(textfieldFileName.getText().isEmpty()){
-                    Random r = new Random();
-                    textfieldFileName.setText("ScreenShoot"+r.nextInt(100));
-                }
-                String filename = dir.getAbsolutePath()+"\\"+textfieldFileName.getText()+".png";
-        
-                //Spara
-                ImageIO.write(capture, "png", new File(filename));
-               
-                savedFiles.add(filename); //Spara filen i listan
-            } 
-            catch (Exception e) {
+        try {
+            JFileChooser chooser = new JFileChooser();
+            chooser.setDialogTitle("Choose folder");
+            chooser.setCurrentDirectory(new File("C:\\T4\\"));
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            chooser.setAcceptAllFileFilterUsed(false);
+            chooser.showOpenDialog(null);
+            File dir = chooser.getSelectedFile();
+            if (textfieldFileName.getText().isEmpty()) {
+                Random r = new Random();
+                textfieldFileName.setText("ScreenShoot" + r.nextInt(100));
             }
+            String filename = dir.getAbsolutePath() + "\\" + textfieldFileName.getText() + ".png";
+
+            //Spara
+            ImageIO.write(capture, "png", new File(filename));
+            saveFile(filename);
+            savedFiles.add(filename); //Spara filen i listan
+            comboboxFiles.addItem(filename);//spara filen i comboboxen
+        } catch (Exception e) {
+        }
     }//GEN-LAST:event_buttonSaveActionPerformed
 
     private void jPanel2ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jPanel2ComponentShown
-        try {
-            labelSavedFile.setIcon(null);
-             comboboxFiles.removeAllItems();
-        }catch(Exception e){}
-        
-        
-        for(String file: savedFiles){
-          comboboxFiles.addItem(file);
-      }
-      
-
-      
     }//GEN-LAST:event_jPanel2ComponentShown
 
     private void comboboxFilesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboboxFilesActionPerformed
-        
+
         String filename = comboboxFiles.getSelectedItem().toString();
-       
+
         ImageIcon imageIcon = new ImageIcon(filename);
-        imageIcon = Resize(imageIcon.getImage(), labelSavedFile.getWidth(),labelSavedFile.getHeight());
-        
+        imageIcon = Resize(imageIcon.getImage(), labelSavedFile.getWidth(), labelSavedFile.getHeight());
+
         labelSavedFile.setIcon(imageIcon);
     }//GEN-LAST:event_comboboxFilesActionPerformed
 
@@ -355,4 +383,5 @@ public class ScreenCaptureForm extends javax.swing.JFrame {
     private javax.swing.JLabel labelSavedFile;
     private javax.swing.JTextField textfieldFileName;
     // End of variables declaration//GEN-END:variables
+
 }
